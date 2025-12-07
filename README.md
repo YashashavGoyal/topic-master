@@ -18,13 +18,13 @@ The system follows a **GitOps** and **Event-Driven** architecture, utilizing eph
 
 ```mermaid
 graph LR
-    A[Cron Schedule (08:30 IST)] -->|Triggers| B(GitHub Actions Runner)
-    B -->|Executes| C[Node.js Runtime]
-    C -->|Fetch RSS| D[Engineering Blogs & YouTube]
-    C -->|Raw Data| E{Gemini 2.0 AI}
-    E -->|Contextual Analysis| F[HTML Report Gen]
-    F -->|SMTP Transport| G[Nodemailer]
-    G -->|Dispatch| H((User Inbox))
+    A["Cron Schedule (08:30 IST)"] -->|Triggers| B("GitHub Actions Runner")
+    B -->|Executes| C["Node.js Runtime"]
+    C -->|Fetch RSS| D["Engineering Blogs & YouTube"]
+    C -->|Raw Data| E{"Gemini 2.0 AI"}
+    E -->|Contextual Analysis| F["HTML Report Gen"]
+    F -->|SMTP Transport| G["Nodemailer"]
+    G -->|Dispatch| H(("User Inbox"))
 ```
 
 ## 🛠️ Tech Stack

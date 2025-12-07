@@ -55,7 +55,7 @@ async function generateDailyReport(feedItems) {
     console.log("🧠 Analyzing content with Gemini...");
     
     // FIX: Using specific model version to prevent 404 errors
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
     You are a Senior Staff Engineer mentoring a student named Yashashav.
@@ -124,11 +124,14 @@ function fallbackHTML() {
         const feeds = await fetchFeeds();
         if (feeds.length === 0) {
             console.log("No new feeds found.");
-            return;
+            // return;
+            process.exit(0);
         }
         const html = await generateDailyReport(feeds);
         await sendEmail(html);
+        process.exit(0);
     } catch (e) {
         console.error("Fatal Error:", e);
+        process.exit(1);
     }
 })();

@@ -2,44 +2,47 @@
 
 # 🚀 Topic Master
 
-### An AI-Powered Autonomous Career Growth Agent
+### Autonomous Career Growth Agent & Knowledge Aggregator
 
-![Node.js](https://img.shields.io/badge/Node.js-v20-green) ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-Automated-blue) ![Gemini AI](https://img.shields.io/badge/AI-Google%20Gemini-orange) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
+![Node.js](https://img.shields.io/badge/Node.js-v20-green?style=flat&logo=node.js) ![Google Gemini](https://img.shields.io/badge/AI-Gemini%202.0%20Flash-magenta?style=flat&logo=google) ![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?style=flat&logo=githubactions) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-**Topic Master** is a fully automated, serverless agent designed to facilitate continuous learning in High-Scale System Design and DevOps. 
+**Topic Master** is a serverless, AI-driven automation tool designed to accelerate career growth in **DevOps** and **Distributed Systems**.
 
-Instead of manually searching for resources, this agent autonomously scrapes engineering blogs from Big Tech giants (Netflix, Uber, AWS), filters them using **Google Gemini AI** based on a specific career profile, and delivers a structured daily briefing via email. It effectively acts as a "Personal CTO," ensuring I stay updated with industry-standard architecture trends.
+Acting as a "Personal CTO," this agent autonomously aggregates high-value engineering resources from top industry sources (Netflix, Uber, AWS), filters them for relevance using **Google's Gemini 2.0 Flash** model, and delivers a structured daily briefing covering scalability patterns and system design concepts.
 
 ---
 
 ## 🏗️ System Architecture
 
-The system operates on a **GitOps** model, utilizing GitHub Actions as a scheduler to run ephemeral compute instances.
+The system follows a **GitOps** and **Event-Driven** architecture, utilizing ephemeral compute containers to minimize costs.
 
 ```mermaid
 graph LR
-    A[RSS Feeds (Netflix/Uber/YouTube)] -->|Raw Data| B(Node.js Aggregator)
-    B -->|Context + Data| C{Gemini 1.5 Flash AI}
-    C -->|Analysis & Filtering| D[HTML Generator]
-    D -->|Responsive Email| E[Nodemailer SMTP]
-    E -->|Daily Briefing| F((User Inbox))
-    G[GitHub Actions Cron] -->|Trigger 08:30 IST| B
+    A[Cron Schedule (08:30 IST)] -->|Triggers| B(GitHub Actions Runner)
+    B -->|Executes| C[Node.js Runtime]
+    C -->|Fetch RSS| D[Engineering Blogs & YouTube]
+    C -->|Raw Data| E{Gemini 2.0 AI}
+    E -->|Contextual Analysis| F[HTML Report Gen]
+    F -->|SMTP Transport| G[Nodemailer]
+    G -->|Dispatch| H((User Inbox))
 ```
 
 ## 🛠️ Tech Stack
 
-*   **Runtime:** Node.js (Asynchronous Event-Driven Architecture)
-*   **Artificial Intelligence:** Google Gemini 1.5 Flash (Context-aware filtering and summarization)
-*   **Orchestration:** GitHub Actions (CRON-based scheduling)
-*   **Data Ingestion:** `rss-parser` (XML/RSS Feed consumption)
-*   **Notification Service:** Nodemailer (SMTP/Gmail Integration)
+*   **Runtime:** Node.js (Async/Await Pattern)
+*   **Artificial Intelligence:** Google Gemini 2.0 Flash (High-throughput, low-latency reasoning)
+*   **Orchestration:** GitHub Actions (Scheduled Workflows)
+*   **Data Ingestion:** XML/RSS Parsing via `rss-parser`
+*   **Notification:** SMTP via `nodemailer`
+
+---
 
 ## ✨ Key Features
 
-*   **Intelligent Curation:** Fetches 20+ articles daily but filters down to the **Top 2** most relevant to DevOps & SRE roles using AI semantic understanding.
-*   **Daily System Design Drill:** Automatically generates a bite-sized lesson on complex topics (e.g., *CAP Theorem, Consistent Hashing, Raft Consensus*) with interview tips.
-*   **Serverless & Free:** Runs entirely on GitHub Actions' free tier and Google's free AI tier. Zero infrastructure cost.
-*   **Responsive UI:** Generates a clean, Dark Mode HTML email template for easy reading on mobile or desktop.
+*   **🧠 Context-Aware Filtering:** Unlike standard RSS readers, this agent uses LLMs to read article titles and selects only the **top 2** resources relevant to a "DevOps/SRE" career path.
+*   **🎓 Daily Design Drill:** Generates a unique, bite-sized lesson on complex topics (e.g., *Consistent Hashing, Raft Consensus, Bloom Filters*) with specific "Interview Pro-Tips."
+*   **⚡ Zero-Cost Infrastructure:** Runs entirely on free-tier compute (GitHub Actions) and free-tier AI API.
+*   **🛡️ Robust Error Handling:** Implements graceful degradation—if the AI fails, the pipeline logs the error and exits cleanly without crashing the workflow.
 
 ---
 
@@ -49,20 +52,18 @@ graph LR
 topic-master/
 ├── .github/
 │   └── workflows/
-│       └── daily_agent.yml   # CI/CD Orchestration logic
-├── node_modules/             # Dependencies
-├── .env                      # Local secrets (Not committed)
-├── .gitignore                # Git ignore rules
-├── index.js                  # Core Logic (Fetcher, AI, Emailer)
-├── package.json              # Dependency manifest
-└── README.md                 # Documentation
+│       └── daily_agent.yml   # CI/CD Schedule Configuration
+├── index.js                  # Core Logic (Fetcher -> AI -> Emailer)
+├── check_models.js           # Utility to list available Gemini models
+├── package.json              # Dependencies
+└── README.md                 # System Documentation
 ```
 
 ---
 
-## 🚀 Setup & Installation
+## 🚀 Local Setup & Installation
 
-To run this agent locally on your machine:
+To run this agent on your local machine for development:
 
 1.  **Clone the Repository**
     ```bash
@@ -75,12 +76,12 @@ To run this agent locally on your machine:
     npm install
     ```
 
-3.  **Configure Environment Variables**
+3.  **Environment Configuration**
     Create a `.env` file in the root directory:
     ```env
-    GEMINI_API_KEY=your_google_ai_key
+    GEMINI_API_KEY=your_google_ai_studio_key
     EMAIL_USER=your_gmail_address
-    EMAIL_PASS=your_app_password
+    EMAIL_PASS=your_app_password_16_chars
     TARGET_EMAIL=destination_email_address
     ```
 
@@ -91,50 +92,27 @@ To run this agent locally on your machine:
 
 ---
 
-## 🤖 Automation (GitHub Actions)
+## 🔧 Troubleshooting
 
-This project is designed to run automatically. The `.github/workflows/daily_agent.yml` file defines a schedule:
+**Issue: `404 Not Found` for Gemini Model**
+Google frequently updates model names (e.g., `gemini-1.5-flash` vs `gemini-2.0-flash`).
+1. Run the utility script to see which models your API key has access to:
+   ```bash
+   node check_models.js
+   ```
+2. Update the `model` string in `index.js` with a supported ID from the list.
 
-```yaml
-on:
-  schedule:
-    # Runs at 03:00 UTC (08:30 AM IST) daily
-    - cron: '0 3 * * *'
-```
-
-**Required GitHub Secrets:**
-Go to `Settings > Secrets and variables > Actions` and add:
-*   `GEMINI_API_KEY`
-*   `EMAIL_USER`
-*   `EMAIL_PASS`
-*   `TARGET_EMAIL`
+**Issue: Script hangs after sending email**
+Ensure `process.exit(0)` is called after `transporter.sendMail()`. Node.js event loops stay active as long as the SMTP connection is open unless explicitly terminated.
 
 ---
 
-## 📸 Sample Output
+## 🤖 CI/CD Automation
 
-*The agent sends a structured HTML email like this:*
-
-> **🚀 Daily Engineering Update**
->
-> **Fresh from the Industry**
->
-> *   **Netflix Tech Blog:** *Evolution of the Netflix Media Database*
->     *   *Why:* Crucial for understanding how to model data at petabyte scale.
-> *   **Hussein Nasser:** *gRPC vs REST*
->     *   *Why:* Essential knowledge for building internal microservices.
->
-> **System Design Concept: Consistent Hashing**
-> *   **Concept:** A distribution scheme that does not depend on the number of servers, allowing scaling without re-mapping all keys.
-> *   **Pro Tip:** In interviews, mention "Virtual Nodes" to solve the problem of uneven data distribution.
-
----
-
-## 🔮 Future Roadmap
-
-*   [ ] **Database Integration:** Store past topics in MongoDB to prevent repetition.
-*   [ ] **Slack/Discord Webhook:** Send alerts to a private discord server instead of Email.
-*   [ ] **Voice Briefing:** Use Text-to-Speech to generate a 2-minute audio summary.
+This project is deployed using **GitHub Actions**.
+*   **Trigger:** Schedule (Cron)
+*   **Frequency:** Daily at 03:00 UTC (08:30 IST)
+*   **Secrets:** Managed via GitHub Repository Settings > Secrets and variables.
 
 ---
 
@@ -142,7 +120,5 @@ Go to `Settings > Secrets and variables > Actions` and add:
 
 **Yashashav Goyal**
 *   *Role:* Aspiring DevOps / SRE Engineer
-*   *Focus:* Automation, Cloud Native, Distributed Systems
+*   *Focus:* Automation, Cloud Native, High-Scale Architecture
 *   [LinkedIn](https://linkedin.com/in/yashashavgoyal) | [GitHub](https://github.com/YashashavGoyal)
-
-***

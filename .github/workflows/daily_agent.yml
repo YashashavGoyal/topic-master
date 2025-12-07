@@ -1,0 +1,32 @@
+name: Career Growth Agent
+
+on:
+  schedule:
+    # Runs daily at 08:30 AM IST (03:00 UTC)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # For manual trigger for testing
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Run AI Agent
+      env:
+        # Github Repo Secrets 
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+        TARGET_EMAIL: ${{ secrets.TARGET_EMAIL }}
+      run: node index.js

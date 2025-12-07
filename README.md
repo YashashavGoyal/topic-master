@@ -2,117 +2,159 @@
 
 # 🚀 Topic Master
 
-### Autonomous Career Growth Agent & Knowledge Aggregator
+### The Autonomous AI Career Architect & Learning Agent
 
-![Node.js](https://img.shields.io/badge/Node.js-v20-green?style=flat&logo=node.js) ![Google Gemini](https://img.shields.io/badge/AI-Gemini%202.0%20Flash-magenta?style=flat&logo=google) ![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?style=flat&logo=githubactions) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
+![Node.js](https://img.shields.io/badge/Node.js-v20-green?logo=node.js) ![MongoDB](https://img.shields.io/badge/Database-MongoDB_Atlas-green?logo=mongodb) ![Gemini AI](https://img.shields.io/badge/AI-Gemini%202.0-magenta?logo=google) ![Architecture](https://img.shields.io/badge/Architecture-SOA-orange)
 
-**Topic Master** is a serverless, AI-driven automation tool designed to accelerate career growth in **DevOps** and **Distributed Systems**.
+**Topic Master** is a stateful, fully automated agent designed to orchestrate a structured learning path for **System Design** and **DevOps**.
 
-Acting as a "Personal CTO," this agent autonomously aggregates high-value engineering resources from top industry sources (Netflix, Uber, AWS), filters them for relevance using **Google's Gemini 2.0 Flash** model, and delivers a structured daily briefing covering scalability patterns and system design concepts.
+Unlike simple RSS aggregators, this system maintains **persistent state** via MongoDB to track course progress (`Lesson 5 of 20`), executes **transactional updates** (rollback on failure), and utilizes **Generative AI** to act as a personal mentor, analyzing complex engineering topics from Netflix, Uber, and AWS.
 
 ---
 
 ## 🏗️ System Architecture
 
-The system follows a **GitOps** and **Event-Driven** architecture, utilizing ephemeral compute containers to minimize costs.
+The project follows a **Service-Oriented Architecture (SOA)**, decoupling business logic (AI/Email) from data access (Models) and configuration.
 
 ```mermaid
-graph LR
-    A["Cron Schedule (08:30 IST)"] -->|Triggers| B("GitHub Actions Runner")
-    B -->|Executes| C["Node.js Runtime"]
-    C -->|Fetch RSS| D["Engineering Blogs & YouTube"]
-    C -->|Raw Data| E{"Gemini 2.0 AI"}
-    E -->|Contextual Analysis| F["HTML Report Gen"]
-    F -->|SMTP Transport| G["Nodemailer"]
-    G -->|Dispatch| H(("User Inbox"))
+graph TD
+    Trigger[GitHub Actions Cron] -->|Start| Orchestrator(index.js)
+    
+    subgraph "Data Layer (MongoDB)"
+        DB1[(ActiveConfig)]
+        DB2[(FeedSources)]
+        DB3[(CourseHistory)]
+    end
+
+    subgraph "Service Layer"
+        Fetcher[RSS Service]
+        AI[Gemini Agent Service]
+        Email[Nodemailer Service]
+    end
+
+    Orchestrator -->|1. Get State| DB1
+    Orchestrator -->|2. Get Sources| DB2
+    Orchestrator -->|3. Fetch Content| Fetcher
+    Fetcher -->|4. Raw Data| AI
+    AI -->|5. Generate Report| Email
+    Email -->|6. Dispatch| User((User Inbox))
+    
+    %% Transactional Logic
+    Email -->|7. On Success| DB1
+    Email -->|7. On Completion| DB3
+    AI -.->|On Error| Rollback[Abort DB Update]
 ```
 
-## 🛠️ Tech Stack
-
-*   **Runtime:** Node.js (Async/Await Pattern)
-*   **Artificial Intelligence:** Google Gemini 2.0 Flash (High-throughput, low-latency reasoning)
-*   **Orchestration:** GitHub Actions (Scheduled Workflows)
-*   **Data Ingestion:** XML/RSS Parsing via `rss-parser`
-*   **Notification:** SMTP via `nodemailer`
-
 ---
 
-## ✨ Key Features
+## 📂 Modular Project Structure
 
-*   **🧠 Context-Aware Filtering:** Unlike standard RSS readers, this agent uses LLMs to read article titles and selects only the **top 2** resources relevant to a "DevOps/SRE" career path.
-*   **🎓 Daily Design Drill:** Generates a unique, bite-sized lesson on complex topics (e.g., *Consistent Hashing, Raft Consensus, Bloom Filters*) with specific "Interview Pro-Tips."
-*   **⚡ Zero-Cost Infrastructure:** Runs entirely on free-tier compute (GitHub Actions) and free-tier AI API.
-*   **🛡️ Robust Error Handling:** Implements graceful degradation—if the AI fails, the pipeline logs the error and exits cleanly without crashing the workflow.
-
----
-
-## 📂 Project Structure
+The codebase is organized into modular services to ensure scalability and testability.
 
 ```bash
 topic-master/
-├── .github/
-│   └── workflows/
-│       └── daily_agent.yml   # CI/CD Schedule Configuration
-├── index.js                  # Core Logic (Fetcher -> AI -> Emailer)
-├── check_models.js           # Utility to list available Gemini models
-├── package.json              # Dependencies
-└── README.md                 # System Documentation
+├── .github/workflows/    # CI/CD Pipelines
+├── .env                  # Environment Variables (Secrets)
+├── package.json          # Dependencies
+├── index.js              # 🧠 The Orchestrator (Entry Point)
+└── src/
+    ├── config/
+    │   └── db.js         # MongoDB Connection Logic
+    ├── models/           # Mongoose Schemas (Data Layer)
+    │   ├── ActiveConfig.js   # Tracks current playlist progress
+    │   ├── CourseHistory.js  # Archives completed courses
+    │   └── FeedSource.js     # Manages Blogs & YouTube channels
+    ├── services/         # Business Logic Layer
+    │   ├── fetcher.js    # RSS Parsing & Aggregation
+    │   ├── aiAgent.js    # Gemini AI Prompt Engineering
+    │   └── emailer.js    # SMTP Transport Service
+    └── utils/
+        ├── seeder.js     # Auto-initializes DB defaults
+        └── checkModels.js # Utility to verify AI Model availability
 ```
 
 ---
 
-## 🚀 Local Setup & Installation
+## 🛠️ Tech Stack & Patterns
 
-To run this agent on your local machine for development:
+*   **Runtime:** Node.js (Async/Await).
+*   **Database:** MongoDB Atlas (Mongoose ODM).
+*   **AI Engine:** Google Gemini 2.0 Flash (Context-aware analysis).
+*   **Design Pattern:** Service-Oriented Architecture (SOA).
+*   **Reliability:** Transactional Integrity (Database only updates if the AI & Email services succeed).
+*   **Infrastructure:** Serverless (GitHub Actions).
 
-1.  **Clone the Repository**
-    ```bash
-    git clone https://github.com/YashashavGoyal/topic-master.git
-    cd topic-master
-    ```
+---
 
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
+## 🚀 Setup & Installation
 
-3.  **Environment Configuration**
-    Create a `.env` file in the root directory:
-    ```env
-    GEMINI_API_KEY=your_google_ai_studio_key
-    EMAIL_USER=your_gmail_address
-    EMAIL_PASS=your_app_password_16_chars
-    TARGET_EMAIL=destination_email_address
-    ```
+### 1. Clone & Install
+```bash
+git clone https://github.com/YashashavGoyal/topic-master.git
+cd topic-master
+npm install
+```
 
-4.  **Run the Agent**
-    ```bash
-    node index.js
+### 2. Configure Environment
+Create a `.env` file in the root directory:
+```env
+# Database (MongoDB Atlas)
+MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/topic-master
+
+# AI Provider (Google AI Studio)
+GEMINI_API_KEY=your_api_key
+
+# Email Service (Gmail App Password)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_16_char_app_password
+TARGET_EMAIL=where_to_send_emails@gmail.com
+```
+
+### 3. Database Initialization (Auto-Seeding)
+You do not need to manually create collections. On the first run, the system detects an empty database and automatically seeds it with:
+*   Default System Design Playlist.
+*   Top Engineering Blogs (Netflix, Uber, AWS).
+
+Run the agent:
+```bash
+node index.js
+```
+
+---
+
+## ⚙️ Managing the Agent (Admin Panel)
+
+Since the state is stored in MongoDB, you manage the agent using **MongoDB Compass** or the **Atlas Dashboard**.
+
+### 🔄 Changing the Learning Topic
+To switch from "System Design" to "Kubernetes":
+1.  Open the `activeconfigs` collection.
+2.  Update the document:
+    *   `playlistId`: `[Paste New YouTube Playlist ID]`
+    *   `currentVideoIndex`: `0`
+    *   `status`: `"start"`
+3.  Save. The agent will automatically start the new course on the next run.
+
+### 📰 Adding New News Sources
+To add a new engineering blog:
+1.  Open the `feedsources` collection.
+2.  Insert a new document:
+    ```json
+    {
+      "url": "https://discord.com/blog/rss",
+      "name": "Discord Engineering",
+      "type": "blog"
+    }
     ```
 
 ---
 
-## 🔧 Troubleshooting
+## 🛡️ Error Handling & Safety
 
-**Issue: `404 Not Found` for Gemini Model**
-Google frequently updates model names (e.g., `gemini-1.5-flash` vs `gemini-2.0-flash`).
-1. Run the utility script to see which models your API key has access to:
-   ```bash
-   node check_models.js
-   ```
-2. Update the `model` string in `index.js` with a supported ID from the list.
-
-**Issue: Script hangs after sending email**
-Ensure `process.exit(0)` is called after `transporter.sendMail()`. Node.js event loops stay active as long as the SMTP connection is open unless explicitly terminated.
-
----
-
-## 🤖 CI/CD Automation
-
-This project is deployed using **GitHub Actions**.
-*   **Trigger:** Schedule (Cron)
-*   **Frequency:** Daily at 03:00 UTC (08:30 IST)
-*   **Secrets:** Managed via GitHub Repository Settings > Secrets and variables.
+This system implements **"Safe State Updates"**:
+*   **Scenario:** The AI API is down or returns an error.
+*   **Action:** The system logs the error and **aborts** the database update.
+*   **Result:** Your progress is preserved. You will retry the same lesson on the next run, ensuring you never miss a topic due to technical failures.
 
 ---
 
@@ -120,5 +162,5 @@ This project is deployed using **GitHub Actions**.
 
 **Yashashav Goyal**
 *   *Role:* Aspiring DevOps / SRE Engineer
-*   *Focus:* Automation, Cloud Native, High-Scale Architecture
+*   *Focus:* Distributed Systems, Automation, Cloud Architecture
 *   [LinkedIn](https://linkedin.com/in/yashashavgoyal) | [GitHub](https://github.com/YashashavGoyal)

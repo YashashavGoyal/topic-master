@@ -30,4 +30,5 @@ jobs:
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         TARGET_EMAIL: ${{ secrets.TARGET_EMAIL }}
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
       run: node index.js

@@ -10,7 +10,7 @@ const generateReport = async (data) => {
 
     // ⚠️ TROUBLESHOOTING: 
     // If 'gemini-2.0-flash' fails, Check avaliable models with checkModels
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL });
 
     let specialInstruction = "";
     if (data.isLastDay) specialInstruction = `ALERT: Last video. Warn user to update playlist ID.`;

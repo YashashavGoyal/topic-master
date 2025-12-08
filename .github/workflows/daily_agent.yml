@@ -29,4 +29,5 @@ jobs:
         EMAIL_USER: ${{ secrets.EMAIL_USER }}
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         TARGET_EMAIL: ${{ secrets.TARGET_EMAIL }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
       run: node index.js

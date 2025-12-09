@@ -119,14 +119,34 @@ const generateReport = async (data) => {
     </html>
     `;
 
-    try {
-        const result = await model.generateContent(prompt);
-        let html = result.response.text();
-        return html.replace(/```html|```/g, ''); 
-    } catch (error) {
-        console.error("❌ AI AGENT CRASHED:", error.message);
-        return null;
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+
+    while (attempt <= MAX_RETRIES) {
+        try {
+            const result = await model.generateContent(prompt);
+            let html = result.response.text();
+            return html.replace(/```html|```/g, '');
+        } catch (error) {
+            attempt++;
+            const isQuotaError = error.message.includes('429') || error.message.includes('Quota exceeded'); // 429 or 503 sometimes
+
+            if (isQuotaError && attempt <= MAX_RETRIES) {
+                const delay = Math.pow(2, attempt) * 2000; // 4s, 8s, 16s
+                console.warn(`⚠️ API Quota hit. Retrying in ${delay / 1000}s (Attempt ${attempt}/${MAX_RETRIES})...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                continue;
+            }
+
+            // Final failure handling
+            console.error("❌ AI AGENT CRASHED:", error.message);
+            if (isQuotaError) {
+                console.error("💡 TIP: This 429 error often means your Google Cloud PROJECT'S Free Tier quota is exhausted. Creating a new API Key on the same project WON'T fix this. You need to create a completely new Google Cloud Project or enable billing.");
+            }
+            return null;
+        }
     }
+    return null;
 };
 
 module.exports = { generateReport };
